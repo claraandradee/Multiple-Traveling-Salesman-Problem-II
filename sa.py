@@ -2,6 +2,8 @@
 # Júlia Enriquetto de Brito      - 22139
 
 import math 
+import copy
+import random
 
 # Lê o n caixeiros e a n cidades
 # Lê a solucao inicial
@@ -34,7 +36,7 @@ def middle_split(lst, n):
         part_size = div + (1 if i == (n // 2) else 0)
         end = start + part_size
         part = lst[start:end]
-        if part:  # Adicionar 0 no início e no final se a parte não estiver vazia
+        if part:  
             part = [0] + part + [0]
         parts.append(part)
         start = end
@@ -50,43 +52,74 @@ print(result)
 '''
 
 # Metodo get_distance 
+# esse metodo agora só conta a distancia quando o vetor já está com o split
 def get_total_distance(mVet):
     total_distance = 0
     for sublist in mVet:
         for v in sublist:
-            distance_vector = 0
-            for i in range(1, len(v)):
-                p_previous = v[i - 1]
-                p_current = v[i]
-                distance = math.sqrt((p_current[0] - p_previous[0])**2 + (p_current[1] - p_previous[1])**2)
-                distance_vector += distance
-            total_distance += distance_vector
+            if isinstance(v, list) and all(isinstance(i, tuple) and len(i) == 2 for i in v):
+                distance_vector = 0
+                for i in range(1, len(v)):
+                    p_previous = v[i - 1]
+                    p_current = v[i]
+                    distance = math.sqrt((p_current[0] - p_previous[0])**2 + (p_current[1] - p_previous[1])**2)
+                    distance_vector += round(distance)  # Arredondando para o inteiro mais próximo
+                total_distance += distance_vector
     return total_distance
 
 # Exemplo de uso 
 '''
-add_distance = get_total_distance(result)
+add_distance = get_total_distance(solucao_initial)
 print("A soma das distâncias dos vetores é:", add_distance)
 '''
 
 # gerando a solução inicial dos dados iniciais
-solucao_initial = middle_split(m_initial, n_travells)
+# solucao_initial = middle_split(m_initial, n_travells)
+# print(solucao_initial)
 # result = get_total_distance(solucao_initial)
-# print(result)
+# print("A soma das distâncias dos vetores é:", result)
 
-# 1. Pega a solução inicial e quebra ela - SPLIT 
-#    Após isso conta a distance total dela - CONCERTAR ISSO AQUI
-def summing_distances(solucao_initial, n):
-    total_sum = 0
-    for _ in range(20):
-        distance = get_total_distance(solucao_initial)
-        total_sum += distance
-        solucao_initial = middle_split(solucao_initial, n)
-    return total_sum
 
-# print(summing_distances(solucao_initial, n_travells))
+# 1. Com os dados acima implementaremos na heurista SA
+def swap(current_solution):
+    i = random.choice(range(len(current_solution)))
+    j = random.choice(range(len(current_solution)))
+    current_solution[i], current_solution[j] = current_solution[j], current_solution[i]
+    return current_solution
 
-# 2. Com os dados acima implementaremos na heurista SA
+def get_neighbors(current_solution):
+    return swap(current_solution)
 
+def annealing(initial_solution, n_maximum_iterations, verbose=False):
+    current_temperature = 100
+    alpha = (1 / current_temperature) ** (1.00 / n_maximum_iterations)
+    current_solution = initial_solution
+    best_known_solution = initial_solution
+
+    for k in range(n_maximum_iterations):
+        neighbor_solution = get_neighbors(copy.deepcopy(current_solution))
+        delta = get_total_distance(current_solution) - get_total_distance(neighbor_solution)
+
+        if delta > 0 or random.uniform(0, 1) < math.exp(float(delta) / float(current_temperature)):
+            current_solution = neighbor_solution
+
+        if get_total_distance(current_solution) < get_total_distance(best_known_solution):
+            best_known_solution = current_solution
+            if verbose:
+                print(k, current_temperature, get_total_distance(best_known_solution))
+
+        current_temperature = alpha * current_temperature
+
+    return best_known_solution
+
+# Gerando a solução inicial dos dados iniciais
+solucao_initial = middle_split(m_initial, n_travells)
+result = get_total_distance(solucao_initial)
+print("A soma das distâncias dos vetores é:", result)
+
+# Executando a otimização
+best_known_solution = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=True)
+print("Melhor solução conhecida:", best_known_solution)
+print("Distância total da melhor solução:", get_total_distance(best_known_solution))
 
 # 3. Grafico representativo
