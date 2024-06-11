@@ -33,14 +33,17 @@ def middle_split(lst, n):
     for i in range(n):
         part_size = div + (1 if i == (n // 2) else 0)
         end = start + part_size
-        parts.append(lst[start:end])
+        part = lst[start:end]
+        if part:  # Adicionar 0 no início e no final se a parte não estiver vazia
+            part = [0] + part + [0]
+        parts.append(part)
         start = end
     
     return parts
 
 # Exemplo de uso
 '''
-vetor = [10, 20, 25, 155, 4, 2, 0, 74, 15]
+vetor = [10, 20, 25, 155, 4, 2, 28, 74, 15]
 partes = 4
 result = middle_split(vetor, partes)
 print(result)
@@ -81,7 +84,7 @@ def summing_distances(solucao_initial, n):
         solucao_initial = middle_split(solucao_initial, n)
     return total_sum
 
-print(summing_distances(solucao_initial, n_travells))
+# print(summing_distances(solucao_initial, n_travells))
 
 # 2. Com os dados acima implementaremos na heurista SA
 
