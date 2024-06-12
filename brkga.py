@@ -3,23 +3,15 @@ import numpy as np
 # 1. 
 # indicar nossas coordenadas matriz
 coordinates = [
-    [(500, 500), (354, 887), (594, 824), (973, 340), (66, 245), (251, 403), (426, 346), (114, 203), (587, 752), (341, 515)],
-    [(941, 723), (101, 10), (774, 432), (35, 344), (54, 311), (720, 88), (2, 28), (106, 624), (444, 698), (126, 631)],
-    [(451, 351), (72, 972), (413, 995), (450, 930), (302, 118), (111, 448), (981, 57), (757, 721), (141, 424), (636, 889)],
-    [(228, 186), (979, 146), (336, 868), (323, 213), (688, 216), (949, 617), (404, 678), (799, 34), (119, 381), (620, 29)],
-    [(391, 812), (207, 723), (863, 665), (282, 824), (614, 66), (382, 216), (496, 645), (241, 934), (206, 287), (262, 793)],
-    [(568, 833), (356, 468), (528, 818), (409, 265), (549, 471), (895, 116), (213, 723), (703, 615), (713, 985), (80, 970)],
-    [(943, 187), (314, 137), (540, 251), (14, 598), (477, 460), (660, 518), (139, 623), (584, 975), (694, 953), (650, 362)],
-    [(886, 637), (84, 752), (910, 718), (43, 680), (998, 683), (261, 406), (441, 439), (627, 393), (50, 754), (28, 841)],
-    [(954, 655), (839, 279), (955, 723), (21, 823), (987, 384), (49, 623), (501, 550), (393, 348), (302, 227), (495, 374)],
-    [(468, 668), (154, 262), (484, 611), (554, 848), (968, 870), (470, 518), (917, 3), (781, 829), (804, 773), (991, 297)],
-    [(820, 629), (259, 24), (956, 921), (773, 973), (859, 681), (549, 1), (585, 435), (954, 797), (33, 173), (961, 136)],
-    [(687, 424), (342, 263), (426, 877), (915, 244)]
+    [(500, 500), (826, 465), (359, 783), (563, 182), (547, 438), (569, 676), (989, 416), (648, 750), (694, 978), (493, 969)],
+    [(175, 89), (104, 130), (257, 848), (791, 249), (952, 204), (34, 654), (89, 503), (548, 964), (492, 34), (749, 592)],
+    [(536, 875), (373, 708), (385, 260), (560, 751), (304, 516), (741, 368), (59, 131), (154, 681), (425, 456), (885, 783)],
+    [(30, 415), (61, 25)]
 ]
 
 # inidicar o numero da populacao que é o numero de cidades
 # indicar o numero de gerações (eu escolho e pode ser bem alto)
-num_cities = 10  # Número de cidades
+num_cities = 31  # Número de cidades
 num_salesmen = 3  # Número de caixeiros viajantes
 
 # a partir dos dados a baixo a gente que decidiu os valores
@@ -135,8 +127,8 @@ def brkga(num_cities, num_salesmen, population_size, num_generations, elite_prop
 
 
 # EXEMPLO DE USO E RESULTADOS
-best_solution_keys, best_fitness = brkga(len(flat_coordinates), 3, population_size, num_generations, elite_proportion, crossover_probability, mutation_probability, distance_matrix)
-best_solution_routes = decode_solution(best_solution_keys, 3)
+best_solution_keys, best_fitness = brkga(len(flat_coordinates), num_salesmen, population_size, num_generations, elite_proportion, crossover_probability, mutation_probability, distance_matrix)
+best_solution_routes = decode_solution(best_solution_keys, num_salesmen)
 
 print("Melhor solução encontrada:")
 for i, route in enumerate(best_solution_routes):
