@@ -20,7 +20,7 @@ m_initial = [
 
 
 
-# Metodo SPLIT 
+# 1. Metodo SPLIT 
 # Esse metodo tem como objetivo dividir igualmente a quantidade de cidades para cada caixeiro 
 def middle_split(lst, n):
     length = len(lst)
@@ -39,15 +39,7 @@ def middle_split(lst, n):
     
     return parts
 
-# Exemplo de uso
-'''
-vetor = [10, 20, 25, 155, 4, 2, 28, 74, 15]
-partes = 4
-result = middle_split(vetor, partes)
-print(result)
-'''
-
-# Metodo get_distance 
+# 2. Metodo get_distance 
 # esse metodo agora só conta a distancia quando o vetor já está com o split
 def get_total_distance(mVet):
     total_distance = 0
@@ -63,20 +55,8 @@ def get_total_distance(mVet):
                 total_distance += distance_vector
     return total_distance
 
-# Exemplo de uso 
-'''
-add_distance = get_total_distance(solucao_initial)
-print("A soma das distâncias dos vetores é:", add_distance)
-'''
 
-# gerando a solução inicial dos dados iniciais
-# solucao_initial = middle_split(m_initial, n_travells)
-# print(solucao_initial)
-# result = get_total_distance(solucao_initial)
-# print("A soma das distâncias dos vetores é:", result)
-
-
-# 1. Com os dados acima implementaremos na heurista SA
+# 3. Com os dados acima implementaremos na heurista SA
 def swap(current_solution):
     i = random.choice(range(len(current_solution)))
     j = random.choice(range(len(current_solution)))
@@ -109,12 +89,11 @@ def annealing(initial_solution, n_maximum_iterations, verbose=False):
     return best_known_solution
 
 
-# Gerando a solução inicial dos dados iniciais
+# EXEMPLO DE USO E RESULTADOS
 solucao_initial = middle_split(m_initial, n_travells)
 result = get_total_distance(solucao_initial)
 print("A soma das distâncias dos vetores é:", result)
 
-# Executando a otimização
 best_known_solution = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=True)
 print("Melhor solução conhecida:", best_known_solution)
 print("Distância total da melhor solução:", get_total_distance(best_known_solution))
