@@ -43,18 +43,18 @@ def middle_split(lst, n):
 # 2. Metodo get_distance 
 # esse metodo agora só conta a distancia quando o vetor já está com o split
 def get_total_distance(mVet):
-    total_distance = 0
+    distance_vector = []
     for sublist in mVet:
         for v in sublist:
             if isinstance(v, list) and all(isinstance(i, tuple) and len(i) == 2 for i in v):
-                distance_vector = 0
+                sublist_distance = 0
                 for i in range(1, len(v)):
                     p_previous = v[i - 1]
                     p_current = v[i]
                     distance = math.sqrt((p_current[0] - p_previous[0])**2 + (p_current[1] - p_previous[1])**2)
-                    distance_vector += round(distance)  # Arredondando para o inteiro mais próximo
-                total_distance += distance_vector
-    return total_distance
+                    sublist_distance += round(distance)  # Arredondando para o inteiro mais próximo
+                distance_vector.append(sublist_distance)
+    return distance_vector
 
 
 # 3. Com os dados acima implementaremos na heurista SA
@@ -78,15 +78,15 @@ def annealing(initial_solution, n_maximum_iterations, verbose=False):
 
     for k in range(n_maximum_iterations):
         neighbor_solution = get_neighbors(copy.deepcopy(current_solution))
-        delta = get_total_distance(current_solution) - get_total_distance(neighbor_solution)
+        delta = sum(get_total_distance(current_solution)) - sum(get_total_distance(neighbor_solution))
 
         if delta > 0 or random.uniform(0, 1) < math.exp(float(delta) / float(current_temperature)):
             current_solution = neighbor_solution
 
-        if get_total_distance(current_solution) < get_total_distance(best_known_solution):
+        if sum(get_total_distance(current_solution)) < sum(get_total_distance(best_known_solution)):
             best_known_solution = current_solution
             if verbose:
-                print(k, current_temperature, get_total_distance(best_known_solution))
+                print(k, current_temperature, sum(get_total_distance(best_known_solution)))
 
         current_temperature = alpha * current_temperature
 
@@ -102,31 +102,31 @@ solucao_initial = middle_split(m_initial, n_travells)
 result = get_total_distance(solucao_initial)
 print("A soma das distâncias dos vetores é:", result)
 
-best_known_solution = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=True)
+best_known_solution, execution_time = annealing(initial_solution=solucao_initial, n_maximum_iterations=100, verbose=True)
 print("Melhor solução conhecida:", best_known_solution)
 print("Distância total da melhor solução:", get_total_distance(best_known_solution))
+print("Tempo de execução:", execution_time)
 
 # Grafico TTT-Plot
-# Função que gera o grafico
+# Função que gera o gráfico
 def generate_graph():
     times = []
     for _ in range(500):
-        best_known_solution, delta_times = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=True)
+        best_known_solution, delta_times = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=False)
         times.append(delta_times)
 
-    prob = [(i - 0.5)/ 100 for i in range(1,101)] # calculo para gerar a probabilidade acumulativa
+    prob = [(i - 0.5) / 100 for i in range(1, 101)]  # cálculo para gerar a probabilidade acumulativa
 
     times.sort()
 
-    ax = plt.subplots()
+    fig, ax = plt.subplots()
     ax.autoscale()
     ax.margins(0.1)
-    plt.scatter(times, prob)
-    plt.title("TTT-Plot Annealing Graphic")
-    plt.xlabel("Time-To-Target")
-    plt.ylabel("Accumulated probability")
+    ax.scatter(times, prob)
+    ax.set_title("TTT-Plot Annealing Graphic")
+    ax.set_xlabel("Time-To-Target")
+    ax.set_ylabel("Accumulated probability")
     plt.show()
-
 
 generate_graph()
 

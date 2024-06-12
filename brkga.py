@@ -1,4 +1,10 @@
+# Clara Andrade Sant´anna Santos - 22124
+# Júlia Enriquetto de Brito      - 22139
+
 import numpy as np
+import matplotlib.pyplot as plt
+import time as t
+
 
 # 1. 
 # indicar nossas coordenadas matriz
@@ -95,6 +101,8 @@ def brkga(num_cities, num_salesmen, population_size, num_generations, elite_prop
     best_solution = None
     best_fitness = float('inf')
 
+    start = t.time()     # para desenhar o grafico
+
     for generation in range(num_generations):
         # Avaliação da população
         fitness = np.array([evaluate_solution(decode_solution(ind, num_salesmen), distance_matrix) for ind in population])
@@ -123,14 +131,42 @@ def brkga(num_cities, num_salesmen, population_size, num_generations, elite_prop
             best_fitness = fitness[min_fitness_idx]
             best_solution = population[min_fitness_idx]
 
-    return best_solution, best_fitness
+    # para desenhor do grafico
+    end = t.time()
+    time = end - start  
+
+    return best_solution, best_fitness, time
 
 
 # EXEMPLO DE USO E RESULTADOS
-best_solution_keys, best_fitness = brkga(len(flat_coordinates), num_salesmen, population_size, num_generations, elite_proportion, crossover_probability, mutation_probability, distance_matrix)
+best_solution_keys, best_fitness, elapsed_time = brkga(len(flat_coordinates), num_salesmen, population_size, num_generations, elite_proportion, crossover_probability, mutation_probability, distance_matrix)
 best_solution_routes = decode_solution(best_solution_keys, num_salesmen)
 
 print("Melhor solução encontrada:")
 for i, route in enumerate(best_solution_routes):
     print(f"Caixeiro {i + 1}: {route}")
 print(f"Distância total: {best_fitness}")
+
+
+# Grafico TTT-Plot
+# Função que gera o gráfico
+def generate_graph():
+    times = []
+    for _ in range(500):
+        best_known_solution, best_fitness, delta_times = brkga(len(flat_coordinates), num_salesmen, population_size, num_generations, elite_proportion, crossover_probability, mutation_probability, distance_matrix)
+        times.append(delta_times)
+
+    prob = [(i - 0.5) / 500 for i in range(1, 501)]  # cálculo para gerar a probabilidade acumulativa
+
+    times.sort()
+
+    fig, ax = plt.subplots()
+    ax.autoscale()
+    ax.margins(0.1)
+    ax.scatter(times, prob)
+    ax.set_title("TTT-Plot BRKGA")
+    ax.set_xlabel("Time-To-Target")
+    ax.set_ylabel("Accumulated probability")
+    plt.show()
+
+generate_graph()
