@@ -1,6 +1,7 @@
 # Clara Andrade Sant´anna Santos - 22124
 # Júlia Enriquetto de Brito      - 22139
 
+import time as t
 import math 
 import copy
 import random
@@ -67,6 +68,9 @@ def get_neighbors(current_solution):
     return swap(current_solution)
 
 def annealing(initial_solution, n_maximum_iterations, verbose=False):
+
+    start = t.time()
+
     current_temperature = 100
     alpha = (1 / current_temperature) ** (1.00 / n_maximum_iterations)
     current_solution = initial_solution
@@ -86,7 +90,11 @@ def annealing(initial_solution, n_maximum_iterations, verbose=False):
 
         current_temperature = alpha * current_temperature
 
-    return best_known_solution
+    end = t.time()
+
+    time = end - start
+   
+    return best_known_solution, time
 
 
 # EXEMPLO DE USO E RESULTADOS
@@ -97,5 +105,29 @@ print("A soma das distâncias dos vetores é:", result)
 best_known_solution = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=True)
 print("Melhor solução conhecida:", best_known_solution)
 print("Distância total da melhor solução:", get_total_distance(best_known_solution))
+
+# Grafico TTT-Plot
+# Função que gera o grafico
+def generate_graph():
+    times = []
+    for _ in range(500):
+        best_known_solution, delta_times = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=True)
+        times.append(delta_times)
+
+    prob = [(i - 0.5)/ 100 for i in range(1,101)] # calculo para gerar a probabilidade acumulativa
+
+    times.sort()
+
+    ax = plt.subplots()
+    ax.autoscale()
+    ax.margins(0.1)
+    plt.scatter(times, prob)
+    plt.title("TTT-Plot Annealing Graphic")
+    plt.xlabel("Time-To-Target")
+    plt.ylabel("Accumulated probability")
+    plt.show()
+
+
+generate_graph()
 
 
