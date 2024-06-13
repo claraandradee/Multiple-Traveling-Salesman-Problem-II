@@ -152,11 +152,11 @@ print(f"Distância total: {best_fitness}")
 # Função que gera o gráfico
 def generate_graph():
     times = []
-    for _ in range(500):
+    for _ in range(100):
         best_known_solution, best_fitness, delta_times = brkga(len(flat_coordinates), num_salesmen, population_size, num_generations, elite_proportion, crossover_probability, mutation_probability, distance_matrix)
         times.append(delta_times)
 
-    prob = [(i - 0.5) / 500 for i in range(1, 501)]  # cálculo para gerar a probabilidade acumulativa
+    prob = [(i - 0.5) / 100 for i in range(1, 101)]  # cálculo para gerar a probabilidade acumulativa
 
     times.sort()
 

@@ -111,8 +111,8 @@ print("Tempo de execução:", execution_time)
 # Função que gera o gráfico
 def generate_graph():
     times = []
-    for _ in range(500):
-        best_known_solution, delta_times = annealing(initial_solution=solucao_initial, n_maximum_iterations=10000, verbose=False)
+    for _ in range(100):
+        best_known_solution, delta_times = annealing(initial_solution=solucao_initial, n_maximum_iterations=500, verbose=False)
         times.append(delta_times)
 
     prob = [(i - 0.5) / 100 for i in range(1, 101)]  # cálculo para gerar a probabilidade acumulativa
